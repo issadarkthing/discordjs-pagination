@@ -1,0 +1,17 @@
+{
+  "name": "@jiman24/discordjs-pagination",
+  "version": "0.0.1",
+  "description": "Discord v13 embed pagination",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "issadarkthing",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "typescript": "^4.5.5"
+  }
+}
