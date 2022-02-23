@@ -47,7 +47,7 @@ export class Pagination {
 
       const filter = (i: MessageComponentInteraction) => {
         const validButton = buttonList.some(x => x.customId === i.customId);
-        const isAuthor = i.user.id === this.msg.id;
+        const isAuthor = i.user.id === this.msg.author.id;
         return validButton && isAuthor;
       }
 
