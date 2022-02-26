@@ -73,7 +73,7 @@ export class Pagination {
             break;
         }
 
-        await i.deferUpdate();
+        try { await i.deferUpdate(); } catch {}
         await i.editReply({
           embeds: [this.pages[page].setFooter({ 
             text: `Page ${page + 1} / ${this.pages.length}` 
