@@ -10,9 +10,11 @@ const buttonList = [
   new MessageButton().setCustomId("previous").setLabel("Previous").setStyle("PRIMARY"),
   new MessageButton().setCustomId("select").setLabel("Select").setStyle("PRIMARY"),
   new MessageButton().setCustomId("next").setLabel("Next").setStyle("PRIMARY"),
+  new MessageButton().setCustomId("cancel").setLabel("Cancel").setStyle("DANGER"),
 ];
 
 export class Pagination {
+  private cancelButton = false;
   onSelect?: (index: number) => void;
 
   constructor(
@@ -30,6 +32,10 @@ export class Pagination {
 
   setOnSelect(cb: (index: number) => void) {
     this.onSelect = cb;
+  }
+
+  addCancelButton() {
+    this.cancelButton = true;
   }
 
   async run() {
@@ -69,6 +75,12 @@ export class Pagination {
           case buttonList[2].customId:
             page = page + 1 < this.pages.length ? ++page : 0;
             break;
+          case buttonList[3].customId:
+            if (this.cancelButton) {
+              collector.stop();
+              resolve();
+              return;
+            }
           default:
             break;
         }
