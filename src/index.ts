@@ -49,11 +49,13 @@ export class Pagination {
 
     return new Promise<void>(async (resolve) => {
       let page = this.index;
-      const row = new MessageActionRow().addComponents(buttonList);
 
       if (this.cancelButton) {
-        row.addComponents(cancelButton);
+        buttonList.push(cancelButton);
       }
+
+      const row = new MessageActionRow()
+        .addComponents(buttonList);
 
       const curPage = await this.msg.channel.send({
         embeds: [this.pages[page].setFooter({ 
@@ -87,11 +89,9 @@ export class Pagination {
             page = page + 1 < this.pages.length ? ++page : 0;
             break;
           case cancelButton.customId:
-            if (this.cancelButton) {
-              collector.stop();
-              resolve();
-              return;
-            }
+            collector.stop();
+            resolve();
+            return;
           default:
             break;
         }
