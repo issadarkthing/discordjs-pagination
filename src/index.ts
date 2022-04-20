@@ -10,8 +10,12 @@ const buttonList = [
   new MessageButton().setCustomId("previous").setLabel("Previous").setStyle("PRIMARY"),
   new MessageButton().setCustomId("select").setLabel("Select").setStyle("PRIMARY"),
   new MessageButton().setCustomId("next").setLabel("Next").setStyle("PRIMARY"),
-  new MessageButton().setCustomId("cancel").setLabel("Cancel").setStyle("DANGER"),
 ];
+
+const cancelButton = new MessageButton()
+  .setCustomId("cancel")
+  .setLabel("Cancel")
+  .setStyle("DANGER");
 
 export class Pagination {
   private cancelButton = false;
@@ -47,6 +51,10 @@ export class Pagination {
       let page = this.index;
       const row = new MessageActionRow().addComponents(buttonList);
 
+      if (this.cancelButton) {
+        row.addComponents(cancelButton);
+      }
+
       const curPage = await this.msg.channel.send({
         embeds: [this.pages[page].setFooter({ 
           text: `Page ${page + 1} / ${this.pages.length}` 
@@ -78,7 +86,7 @@ export class Pagination {
           case buttonList[2].customId:
             page = page + 1 < this.pages.length ? ++page : 0;
             break;
-          case buttonList[3].customId:
+          case cancelButton.customId:
             if (this.cancelButton) {
               collector.stop();
               resolve();
