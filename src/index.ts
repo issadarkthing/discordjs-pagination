@@ -28,14 +28,17 @@ export class Pagination {
 
   setSelectText(text: string) {
     buttonList[1].setLabel(text);
+    return this;
   }
 
   setOnSelect(cb: (index: number) => void) {
     this.onSelect = cb;
+    return this;
   }
 
   addCancelButton() {
     this.cancelButton = true;
+    return this;
   }
 
   async run() {
