@@ -25,7 +25,7 @@ export class Pagination {
     private index = 0,
     private timeout = 120000,
   ) {
-    if (!pages) throw new Error("Pages are not given.");
+    if (pages.length === 0) throw new Error("Pages requires at least 1 embed");
   }
 
   setSelectText(text: string) {
