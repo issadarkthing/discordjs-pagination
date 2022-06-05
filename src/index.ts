@@ -11,6 +11,12 @@ const cancelButton = new MessageButton()
   .setLabel("Cancel")
   .setStyle("DANGER");
 
+export interface PaginationOptions {
+  index?: number;
+  timeout?: number;
+  userID?: string;
+}
+
 export class Pagination {
   private buttonList = [
     new MessageButton().setCustomId("previous").setLabel("Previous").setStyle("PRIMARY"),
@@ -22,8 +28,7 @@ export class Pagination {
   constructor(
     private msg: Message,
     private pages: MessageEmbed[],
-    private index = 0,
-    private timeout = 120000,
+    private options?: PaginationOptions,
   ) {
     if (pages.length === 0) throw new Error("Pages requires at least 1 embed");
   }
@@ -46,7 +51,7 @@ export class Pagination {
   async run() {
 
     return new Promise<void>(async (resolve) => {
-      let page = this.index;
+      let page = this.options?.index ?? 0;
 
       const row = new MessageActionRow()
         .addComponents(this.buttonList);
@@ -60,13 +65,14 @@ export class Pagination {
 
       const filter = (i: MessageComponentInteraction) => {
         const validButton = this.buttonList.some(x => x.customId === i.customId);
-        const isAuthor = i.user.id === this.msg.author.id;
-        return validButton && isAuthor;
+        const target = this.options?.userID || this.msg.author.id;
+        const isTarget = i.user.id === target;
+        return validButton && isTarget;
       }
 
       const collector = curPage.createMessageComponentCollector({
         filter,
-        time: this.timeout,
+        time: this.options?.timeout || 60_000,
       });
 
       collector.on("collect", async (i) => {
