@@ -4,6 +4,7 @@ import {
   MessageEmbed,
   MessageButton,
   MessageComponentInteraction,
+  CommandInteraction,
 } from "discord.js";
 
 const cancelButton = new MessageButton()
@@ -26,7 +27,7 @@ export class Pagination {
   onSelect?: (index: number) => void;
 
   constructor(
-    private msg: Message,
+    private i: CommandInteraction,
     private pages: MessageEmbed[],
     private options?: PaginationOptions,
   ) {
@@ -56,16 +57,16 @@ export class Pagination {
       const row = new MessageActionRow()
         .addComponents(this.buttonList);
 
-      const curPage = await this.msg.channel.send({
+      const curPage = await this.i.editReply({
         embeds: [this.pages[page].setFooter({ 
           text: `Page ${page + 1} / ${this.pages.length}` 
         })],
         components: [row],
-      });
+      }) as Message<boolean>;
 
       const filter = (i: MessageComponentInteraction) => {
         const validButton = this.buttonList.some(x => x.customId === i.customId);
-        const target = this.options?.userID || this.msg.author.id;
+        const target = this.options?.userID || this.i.user.id;
         const isTarget = i.user.id === target;
         return validButton && isTarget;
       }
