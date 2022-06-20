@@ -109,7 +109,7 @@ export class Pagination {
 
       collector.on("end", (_, reason) => {
         if (reason !== "messageDelete") {
-          curPage.delete().catch();
+          this.i.editReply({ content: "\u200b" });
         }
       });
     })
