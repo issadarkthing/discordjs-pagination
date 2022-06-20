@@ -109,7 +109,7 @@ export class Pagination {
 
       collector.on("end", (_, reason) => {
         if (reason !== "messageDelete") {
-          this.i.editReply({ content: "\u200b" });
+          this.i.editReply({ content: "\u200b", embeds: [], components: [] });
         }
       });
     })
