@@ -25,6 +25,7 @@ export class Pagination {
     new MessageButton().setCustomId("next").setLabel("Next").setStyle("PRIMARY"),
   ];
   onSelect?: (index: number) => void;
+  noSelect = false;
 
   constructor(
     private i: CommandInteraction,
@@ -32,6 +33,10 @@ export class Pagination {
     private options?: PaginationOptions,
   ) {
     if (pages.length === 0) throw new Error("Pages requires at least 1 embed");
+  }
+
+  setNoSelect(select: boolean) {
+    this.noSelect = select;
   }
 
   setSelectText(text: string) {
@@ -52,7 +57,12 @@ export class Pagination {
   async run() {
 
     return new Promise<void>(async (resolve) => {
+
       let page = this.options?.index ?? 0;
+
+      if (this.noSelect) {
+        this.buttonList.splice(1, 1);
+      }
 
       const row = new MessageActionRow()
         .addComponents(this.buttonList);
@@ -78,15 +88,15 @@ export class Pagination {
 
       collector.on("collect", async (i) => {
         switch (i.customId) {
-          case this.buttonList[0].customId:
+          case "previous":
             page = page > 0 ? --page : this.pages.length - 1;
             break;
-          case this.buttonList[1].customId:
+          case "select":
             this.onSelect && this.onSelect(page);
             collector.stop();
             resolve();
             return;
-          case this.buttonList[2].customId:
+          case "next":
             page = page + 1 < this.pages.length ? ++page : 0;
             break;
           case cancelButton.customId:
