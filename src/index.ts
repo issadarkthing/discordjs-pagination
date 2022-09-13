@@ -1,16 +1,17 @@
 import {
-  MessageActionRow,
+  ActionRowBuilder,
   Message,
-  MessageEmbed,
-  MessageButton,
+  EmbedBuilder,
+  ButtonBuilder,
   MessageComponentInteraction,
   CommandInteraction,
+  ButtonStyle,
 } from "discord.js";
 
-const cancelButton = new MessageButton()
+const cancelButton = new ButtonBuilder()
   .setCustomId("cancel")
   .setLabel("Cancel")
-  .setStyle("DANGER");
+  .setStyle(ButtonStyle.Danger);
 
 export interface PaginationOptions {
   index?: number;
@@ -20,16 +21,25 @@ export interface PaginationOptions {
 
 export class Pagination {
   private buttonList = [
-    new MessageButton().setCustomId("previous").setLabel("Previous").setStyle("PRIMARY"),
-    new MessageButton().setCustomId("select").setLabel("Select").setStyle("PRIMARY"),
-    new MessageButton().setCustomId("next").setLabel("Next").setStyle("PRIMARY"),
+    new ButtonBuilder()
+      .setCustomId("previous")
+      .setLabel("Previous")
+      .setStyle(ButtonStyle.Primary),
+    new ButtonBuilder()
+      .setCustomId("select")
+      .setLabel("Select")
+      .setStyle(ButtonStyle.Primary),
+    new ButtonBuilder()
+      .setCustomId("next")
+      .setLabel("Next")
+      .setStyle(ButtonStyle.Primary),
   ];
   onSelect?: (index: number) => void;
   noSelect = false;
 
   constructor(
     private i: CommandInteraction,
-    private pages: MessageEmbed[],
+    private pages: EmbedBuilder[],
     private options?: PaginationOptions,
   ) {
     if (pages.length === 0) throw new Error("Pages requires at least 1 embed");
@@ -64,7 +74,7 @@ export class Pagination {
         this.buttonList.splice(1, 1);
       }
 
-      const row = new MessageActionRow()
+      const row = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(this.buttonList);
 
       const curPage = await this.i.editReply({
@@ -75,7 +85,9 @@ export class Pagination {
       }) as Message<boolean>;
 
       const filter = (i: MessageComponentInteraction) => {
-        const validButton = this.buttonList.some(x => x.customId === i.customId);
+        if (!i.isButton()) return false;
+        //@ts-ignore
+        const validButton = this.buttonList.some(x => x.data.custom_id === i.customId);
         const target = this.options?.userID || this.i.user.id;
         const isTarget = i.user.id === target;
         return validButton && isTarget;
@@ -99,7 +111,8 @@ export class Pagination {
           case "next":
             page = page + 1 < this.pages.length ? ++page : 0;
             break;
-          case cancelButton.customId:
+          //@ts-ignore
+          case cancelButton.data.custom_id:
             collector.stop();
             resolve();
             return;
