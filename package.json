@@ -1,6 +1,6 @@
 {
   "name": "@jiman24/discordjs-pagination",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Discord v13 embed pagination",
   "main": "dist/index.js",
   "scripts": {
