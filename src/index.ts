@@ -86,6 +86,7 @@ export class Pagination {
 
       const filter = (i: MessageComponentInteraction) => {
         if (!i.isButton()) return false;
+        i.deferUpdate().catch(() => {});
         //@ts-ignore
         const validButton = this.buttonList.some(x => x.data.custom_id === i.customId);
         const target = this.options?.userID || this.i.user.id;
