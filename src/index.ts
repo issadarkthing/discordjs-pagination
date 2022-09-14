@@ -106,7 +106,6 @@ export class Pagination {
           case "select":
             this.onSelect && this.onSelect(page);
             collector.stop();
-            resolve();
             return;
           case "next":
             page = page + 1 < this.pages.length ? ++page : 0;
@@ -114,7 +113,6 @@ export class Pagination {
           //@ts-ignore
           case cancelButton.data.custom_id:
             collector.stop();
-            resolve();
             return;
           default:
             break;
@@ -132,7 +130,8 @@ export class Pagination {
 
       collector.on("end", (_, reason) => {
         if (reason !== "messageDelete") {
-          this.i.editReply({ content: "\u200b", embeds: [], components: [] });
+          this.i.editReply({ content: "\u200b", embeds: [], components: [] })
+            .then(() => resolve());
         }
       });
     })
