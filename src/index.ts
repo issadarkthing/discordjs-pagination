@@ -6,6 +6,7 @@ import {
   MessageComponentInteraction,
   CommandInteraction,
   ButtonStyle,
+  AttachmentBuilder,
 } from "discord.js";
 
 const cancelButton = new ButtonBuilder()
@@ -17,6 +18,7 @@ export interface PaginationOptions {
   index?: number;
   timeout?: number;
   userID?: string;
+  files?: AttachmentBuilder[];
 }
 
 export class Pagination {
@@ -82,6 +84,7 @@ export class Pagination {
           text: `Page ${page + 1} / ${this.pages.length}` 
         })],
         components: [row],
+        files: this.options?.files || [],
       }) as Message<boolean>;
 
       const filter = (i: MessageComponentInteraction) => {
@@ -125,6 +128,7 @@ export class Pagination {
             text: `Page ${page + 1} / ${this.pages.length}` 
           })],
           components: [row],
+          files: this.options?.files || [],
         });
         collector.resetTimer();
       });
